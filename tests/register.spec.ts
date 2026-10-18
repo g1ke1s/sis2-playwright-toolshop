@@ -31,7 +31,7 @@ test.describe('TC-01 Register a new customer', () => {
 
   test('submitting an empty form shows required-field errors and creates nothing', async ({ registerPage, page }) => {
     await registerPage.open();
-    await registerPage.submit.click();
+    await registerPage.submitEmpty();
 
     await expect(registerPage.firstNameError).toBeVisible();
     await expect(registerPage.emailError).toBeVisible();

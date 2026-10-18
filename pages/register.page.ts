@@ -42,4 +42,8 @@ export class RegisterPage extends BasePage {
     await p.getByTestId('password').fill(user.password);
     await this.submit.click();
   }
+
+  async submitEmpty(): Promise<void> {
+    await this.submit.click();
+  }
 }
