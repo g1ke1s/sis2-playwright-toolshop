@@ -25,9 +25,12 @@ Automate these 5 test cases, one spec file each:
 3. Buy a product — add to cart → cart shows the right item and quantity → checkout completes
 4. Compare two products — open two products, capture name and price, assert a stated comparison
 5. Reset a password — known e-mail gets a confirmation, invalid e-mail gets an error
-```![Prompt sent to Claude](screenshots/prompt.png)
+```
 
+![Prompt sent to Claude](screenshots/prompt.png)
+```
 ## Why I wrote the prompt this way
+
 
 - **I attached the slides and pointed to slides 19–30.** That way the AI could
   read the rules and grading criteria itself instead of me paraphrasing them.
@@ -48,7 +51,7 @@ Same tool/model throughout: Claude, claude.ai agent mode, Claude Opus 5.5.
 
 **AI used?** Yes
 
-**Prompt:**
+**Prompt:** (polished)
 > I ran the suite. Remove the auth.setup / storageState login-once step: TC-05
 > resets the password and every test uses its own fresh user, so a shared
 > session breaks independence. Give each test its own API-registered user via
@@ -78,7 +81,7 @@ case.
 
 **AI used?** Yes
 
-**Prompt:**
+**Prompt:** (polished)
 > Fix the reset-banner issue, the checkout 422. Make sure everything works.
 
 **Context I gave the AI:** the trace showing the banner renders as the raw
