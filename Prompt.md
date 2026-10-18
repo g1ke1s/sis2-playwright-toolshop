@@ -28,7 +28,7 @@ Automate these 5 test cases, one spec file each:
 ```
 
 ![Prompt sent to Claude](screenshots/prompt.png)
-```
+
 ## Why I wrote the prompt this way
 
 
