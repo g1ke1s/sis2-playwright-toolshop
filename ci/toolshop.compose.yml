@@ -1,0 +1,43 @@
+# A local copy of the Toolshop for CI, from the official prebuilt images
+# (testsmith-io/practice-software-testing, docker-compose.prod.yml + mailcatcher).
+# The public site sits behind a Cloudflare bot check that blocks GitHub runners,
+# so CI tests this local copy instead: UI http://localhost:4200, API http://localhost:8091.
+name: toolshop
+services:
+  laravel-api:
+    image: testsmith/practice-software-testing-sprint5-api
+    environment:
+      - "PHP_OPCACHE_VALIDATE_TIMESTAMPS=1"
+      - "DB_PORT=3306"
+      - "DB_HOST=mariadb"
+      - "host=localhost"
+      - "DISABLE_LOGGING=true"
+    volumes:
+      - laravel-app-code:/var/www
+
+  angular-ui:
+    image: testsmith/practice-software-testing-sprint5-ui
+    ports:
+      - 4200:4200
+    command: bash -c "ng serve --host 0.0.0.0 --port 4200"
+
+  web:
+    image: testsmith/practice-software-testing-web
+    ports:
+      - 8091:80
+    depends_on:
+      - laravel-api
+
+  mariadb:
+    image: yobasystems/alpine-mariadb:10.6.11
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: toolshop
+
+  mailcatcher:            # the API sends reset-password e-mails here
+    image: dockage/mailcatcher:0.9.0
+
+volumes:
+  laravel-app-code:
