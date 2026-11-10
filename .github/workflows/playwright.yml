@@ -26,8 +26,16 @@ jobs:
         # push / pull_request → inputs.shards is empty → 4 shards
         shardIndex: ${{ fromJSON(inputs.shards == '1' && '[1]' || '[1, 2, 3, 4]') }}
         shardTotal: ${{ fromJSON(inputs.shards == '1' && '[1]' || '[4]') }}
+    env:
+      # The public site's Cloudflare bot check blocks GitHub runners,
+      # so every shard tests its own local Toolshop (see ci/toolshop.compose.yml).
+      BASE_URL: http://localhost:4200
+      API_URL: http://localhost:8091
     steps:
       - uses: actions/checkout@v4
+
+      - name: Start the Toolshop (Docker)    # boots in the background while npm/browsers install
+        run: docker compose -f ci/toolshop.compose.yml up -d --quiet-pull
 
       - uses: actions/setup-node@v4
         with:
@@ -43,11 +51,11 @@ jobs:
       - name: Type-check
         run: npx tsc -p .
 
+      - name: Wait for the Toolshop and seed the database
+        run: bash ci/wait-toolshop.sh
+
       - name: Run Playwright tests
         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-        env:
-          BASE_URL: ${{ vars.BASE_URL }}
-          API_URL: ${{ vars.API_URL }}
 
       - name: DEBUG print failure context
         if: failure()
