@@ -57,10 +57,6 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-      - name: DEBUG print failure context
-        if: failure()
-        run: for f in $(find test-results -name error-context.md); do echo "=== $f"; cat "$f"; done
-
       - name: Upload blob report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
