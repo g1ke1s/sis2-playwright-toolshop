@@ -71,6 +71,8 @@ point them anywhere else (e.g. the same Docker Toolshop:
 `docker compose -f ci/toolshop.compose.yml up -d && bash ci/wait-toolshop.sh`,
 then `BASE_URL=http://localhost:4200 API_URL=http://localhost:8091 npx playwright test`).
 
+Green runs have no traces (`on-first-retry`); [this demo run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42754081413) from
+branch `ci/trace-demo` has a flaky test with a trace in `test-results-1`.
 To open a trace: download `test-results-N`, then
 `npx playwright show-trace <path>/trace.zip`, or drop the file on
 <https://trace.playwright.dev>.

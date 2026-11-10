@@ -118,7 +118,7 @@ results through the API:
 | 3 | The npm cache is restored on the second run | `setup-node` log: *"Cache restored from key …"* | yes, from the second run on |
 | 4 | 4 shards run in parallel, then `Merge reports` runs | Run graph | ![run graph](screenshots/ci-run-graph.png) |
 | 5 | The artefacts are there: `playwright-report`, `test-results-1…4`, `junit-report` | Run page | ![artefacts](screenshots/ci-artifacts.png) |
-| 6 | A trace opens | Downloaded `test-results-N` → trace.playwright.dev | TODO |
+| 6 | A trace opens | Branch `ci/trace-demo`: a test that fails only on the first attempt → [flaky run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42754081413); downloaded `test-results-1` → trace.playwright.dev | TODO: opened? |
 | 7 | `forbidOnly` fails CI | Branch `ci/forbid-only-demo` with one `test.only` | [failed run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42751438450): *"item focused with '.only' is not allowed…"* |
 | 8 | Before/after timing | 3 × `Run workflow` with `shards=1`, 3 × with `shards=4`, median | table in README |
 | 9 | The badge shows the status of `main` | After the PR was merged | README front page |
