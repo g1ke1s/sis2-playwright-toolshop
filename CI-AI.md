@@ -33,8 +33,17 @@ https://github.com/g1ke1s/sis2-playwright-toolshop
 Напиши примерный мд с ai использованием
 ```
 
-(*"Write a sample md about the AI use"*.) This file is the result. I then
-filled in section 5.
+(*"Write a sample md about the AI use"*.) This file is the result.
+
+**Prompt 4.**
+
+```text
+Все сам пушь
+```
+
+(*"Push everything yourself"*.) Claude pushed the branch and opened the PR.
+It found why the tests failed on GitHub (item 4 in section 3) and fixed it,
+then ran the timing runs. I then filled in section 5.
 
 ## 3. What the AI produced
 
@@ -44,6 +53,7 @@ filled in section 5.
 | `playwright.config.ts` | When `CI` is set: `forbidOnly`, `retries: 2`, `workers: 2`, reporters `list` + `blob` + `junit`. `trace: 'on-first-retry'`, video on failure. | 3, 4 |
 | `merge.config.ts` | New file: HTML and JUnit reporters for the merged report. | 3, 5 |
 | `README.md` | Badge for `main`, `## CI` section, a template for the timing table. | 5, 6 |
+| `ci/toolshop.compose.yml`, `ci/nginx.conf`, `ci/wait-toolshop.sh` | New: every shard starts its own Toolshop in Docker (official prebuilt `sprint5` images), seeds the database and waits until the API and the UI answer. | 2 |
 | `.gitignore` | Added `reports/`, `all-blob-reports/`, `.act-artifacts/`, `.secrets`. | — |
 
 ### Where the AI went beyond the guide, and why
@@ -62,7 +72,19 @@ filled in section 5.
    matrix by hand for the "before" run. With the input, the "before" (1 shard)
    and "after" (4 shards) runs come from the same commit, and nothing has to
    be reverted.
-4. **I kept the existing `tsc` type-check step** in the workflow.
+4. **The CI target is a local Toolshop in Docker, not the public site.**
+   The first push ran the pipeline correctly: 4 shards, a merged report, and
+   all the artefacts. But 3 tests were red, and the same 3 tests had failed on
+   `main` since 17 October. To see why, the AI added a temporary step that
+   printed `error-context.md` into the log. The page snapshot showed
+   Cloudflare's *"Performing security verification"* page instead of the
+   Toolshop: the public site blocks GitHub runners. The fix was to run the
+   official prebuilt images in each shard. The prebuilt `web` image is
+   arm64-only and failed with `exec format error`, so it was replaced with
+   plain `nginx` and the upstream vhost. The debug step was then removed.
+   After that, all 11 tests passed. Run locally, the tests still default to
+   the public site.
+5. **I kept the existing `tsc` type-check step** in the workflow.
 
 ## 4. What the AI checked (in its sandbox)
 
@@ -74,21 +96,30 @@ filled in section 5.
 | `test(` changed to `test.only(` and run with `CI=true` | fails: *"item focused with '.only' is not allowed due to the 'forbidOnly' option"* |
 | 2 shards → `merge-reports --config merge.config.ts` | `playwright-report/index.html` and `reports/junit-merged.xml` with `tests="11"` |
 
-**Limitation:** the sandbox could not download Chromium or reach
-practicesoftwaretesting.com, so the tests themselves did not run there. The
-AI said this plainly. Everything in section 5 was checked on GitHub.
+The sandbox could not download Chromium or reach practicesoftwaretesting.com,
+so the AI pushed the branch itself and read the GitHub Actions logs and
+results through the API:
+
+| Check on GitHub | Result |
+|---|---|
+| Runs for push and for the PR | both appear in Actions |
+| Second run, `setup-node` | `Cache restored from key: node-cache-Linux-x64-npm-…` |
+| Tests after the switch to the local Toolshop | 3 + 3 + 3 + 2 passed, 0 failed, 0 flaky |
+| Artefacts | `playwright-report`, `junit-report`, `test-results-1…4`, `blob-report-1…4` |
+| Timing | 3 × `shards=1` and 3 × `shards=4` via `workflow_dispatch`, median in README |
+| `forbidOnly` | branch `ci/forbid-only-demo` with one `test.only` → run fails |
 
 ## 5. My review and verification
 
 | # | What I checked | How | Result |
 |---|---|---|---|
 | 1 | I read every changed line and compared it with the guide | `git diff main` | TODO |
-| 2 | A run for a push to the feature branch, and a separate run for the PR | Actions tab | [push run](LINK), [PR run](LINK) |
-| 3 | The npm cache is restored on the second run | `setup-node` log: *"Cache restored from key …"* | TODO |
+| 2 | A run for a push to the feature branch, and a separate run for the PR | Actions tab | [push run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42751403712), [PR run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42751410495) |
+| 3 | The npm cache is restored on the second run | `setup-node` log: *"Cache restored from key …"* | yes, from the second run on |
 | 4 | 4 shards run in parallel, then `Merge reports` runs | Run graph | ![run graph](screenshots/ci-run-graph.png) |
 | 5 | The artefacts are there: `playwright-report`, `test-results-1…4`, `junit-report` | Run page | ![artefacts](screenshots/ci-artifacts.png) |
 | 6 | A trace opens | Downloaded `test-results-N` → trace.playwright.dev | TODO |
-| 7 | `forbidOnly` fails CI | Pushed a temporary `test.only` to a scratch branch | [failed run](LINK), then reverted |
+| 7 | `forbidOnly` fails CI | Branch `ci/forbid-only-demo` with one `test.only` | [failed run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42751438450): *"item focused with '.only' is not allowed…"* |
 | 8 | Before/after timing | 3 × `Run workflow` with `shards=1`, 3 × with `shards=4`, median | table in README |
 | 9 | The badge shows the status of `main` | After the PR was merged | README front page |
 
