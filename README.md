@@ -82,12 +82,20 @@ GitHub Actions: *Actions → Playwright Tests → Run workflow*, `shards` = `1` 
 
 | Configuration | Total run time | Run tests step (slowest shard) | Run |
 | --- | --- | --- | --- |
-| 1 job, no sharding | X min Y s | X min Y s | [run](LINK) |
-| 4 shards + merge | X min Y s | X min Y s | [run](LINK) |
+| 1 job, no sharding | 1 min 39 s | 12 s | [run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42753169583) |
+| 4 shards + merge | 1 min 47 s | 9 s | [run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42753360393) |
 
-Median of 3 `workflow_dispatch` runs per configuration.
-Conclusion: TODO (with 11 tests and ~1 min of setup per shard, the total may
-drop only a little; the test step itself shrinks, the setup does not).
+Median of 3 `workflow_dispatch` runs per configuration (10 Nov 2026).
+All runs: 1 shard — 5 min 24 s, [1 min 39 s](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42753169583), [1 min 34 s](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42753584569);
+4 shards — 6 min 26 s, [1 min 47 s](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42753360393), [1 min 31 s](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42753783059).
+The two first runs were slow because the browser download took up to 5 minutes on
+one runner; the median ignores that outlier.
+
+**Conclusion:** sharding cut the test step itself from 12 s to 9 s, but the total
+run time did not drop (1 min 39 s → 1 min 47 s): the 11 tests take about 12 s, while
+every shard repeats ~1 min of setup (Toolshop containers, `npm ci`, Chromium) and the
+merge job adds ~15 s. For a suite this small one job is enough; sharding pays off
+once the tests themselves take several minutes.
 
 ### Running the CI mode locally
 
