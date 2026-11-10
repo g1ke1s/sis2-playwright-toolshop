@@ -43,6 +43,12 @@ matrix gives sharding with a few lines of YAML.
 
 - runs on every push and every pull request (no branch filter), plus manual
   runs (`workflow_dispatch`) for the timing below;
+- **target:** a local Toolshop started in Docker inside every shard
+  (`ci/toolshop.compose.yml`, official prebuilt `sprint5` images, freshly seeded
+  by `ci/wait-toolshop.sh`). The public site is behind a Cloudflare bot check:
+  from GitHub runners every test that signs in landed on *"Performing security
+  verification"* and failed (the old single-job workflow on `main` was red for
+  this reason). A local copy also gives every shard its own clean data;
 - `actions/setup-node` with `cache: npm`, then `npm ci`, then
   `npx playwright install --with-deps chromium`, then `tsc` type-check;
 - the full suite with no filters, split into 4 shards (`--shard=i/4`)
@@ -60,9 +66,10 @@ matrix gives sharding with a few lines of YAML.
 Locally (no `CI`) the config keeps the `html` reporter and no retries.
 `merge.config.ts` builds the merged report.
 
-The target site can be changed without editing code: set `BASE_URL` / `API_URL`
-under *Settings → Secrets and variables → Actions → Variables*; when unset, the
-public Toolshop is used.
+Locally the tests still default to the public site; `BASE_URL` / `API_URL`
+point them anywhere else (e.g. the same Docker Toolshop:
+`docker compose -f ci/toolshop.compose.yml up -d && bash ci/wait-toolshop.sh`,
+then `BASE_URL=http://localhost:4200 API_URL=http://localhost:8091 npx playwright test`).
 
 To open a trace: download `test-results-N`, then
 `npx playwright show-trace <path>/trace.zip`, or drop the file on
