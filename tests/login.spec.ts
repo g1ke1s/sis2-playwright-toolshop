@@ -2,7 +2,7 @@ import { test, expect } from '../fixtures/pages.fixture';
 import { AccountPage } from '../pages/account.page';
 
 test.describe('TC-02 Log in', () => {
-  test('valid credentials open the account page', async ({ loginPage, accountPage, registeredUser, page }) => {
+  test.only('valid credentials open the account page', async ({ loginPage, accountPage, registeredUser, page }) => {
     await loginPage.open();
     await loginPage.signIn(registeredUser);
 
