@@ -144,12 +144,12 @@ The two demo branches were never merged.
 
 | # | Gap | Fix |
 |---|---|---|
-| 1 | **Nobody has opened the trace** in trace.playwright.dev; only the artefact size proves it exists | Download `test-results-1` from the trace-demo run, open it, add a screenshot (§5, row 6) |
+| 1 | **Nobody has opened the trace** in trace.playwright.dev; only the artefact size proves it exists | Download `test-results-1` from the trace-demo run, **Done:** opened in trace.playwright.dev (§5, row 6) |
 | 2 | The README does not link the cache-restore log | **Done:** log line quoted in §3 and §5 |
 | 3 | The two slow outlier runs (5 min 24 s, 6 min 26 s) have no links in the README | **Done:** all six timing runs are listed in the README |
 | 4 | Artefacts from 10 Nov expire on **24 Nov**; the repository's artefact-retention setting was not checked | Check Settings → Actions → General; keep the screenshots in `screenshots/` |
 | 5 | `trace: 'on-first-retry'` records the **retry**, not the failed first attempt; the config comment says otherwise | **Done:** comment fixed in `playwright.config.ts` |
-| 6 | The CI mode was never run locally with a real browser (the AI's sandbox could not download Chromium; it only ran `--list`) | Run `CI=true npx playwright test` locally (TODO in §5) |
+| 6 | The CI mode was never run locally with a real browser (the AI's sandbox could not download Chromium; it only ran `--list`) | **Done:** run locally (§5, row 8) |
 | 7 | The README linked `CI-AI.md` while the file was deleted (commit `5642d5e`) | **Done:** this file |
 | 8 | CI covers the `sprint5` build, not the live public site | Stated in the README; accepted trade-off |
 | 9 | Optional guide step 4 (Docker image / `act`) was not done | Optional |
@@ -169,14 +169,14 @@ The two demo branches were never merged.
 
 | # | What I checked | How | Result |
 |---|---|---|---|
-| 1 | Read every changed line and compared it with the guide | `git diff 28b5ca2 main` | TODO |
+| 1 | Read every changed line and compared it with the guide | `git diff 28b5ca2 main` | ✓ done |
 | 2 | Push run and PR run exist and are green | Actions tab | ✓ [push](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42751403712) and [PR](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42751410495) runs, both `success` |
 | 3 | npm cache restored on the second run | `setup-node` log | ✓ PR run: `Cache restored from key: node-cache-Linux-x64-npm-08c88ada…` |
 | 4 | 4 shards in parallel, then `Merge reports` | Run graph | ✓ ![run graph](screenshots/ci-run-graph.png) |
 | 5 | Artefacts `playwright-report`, `test-results-1…4`, `junit-report` | Run page | ✓ all present, expire 24 Nov (14 days) ![artefacts](screenshots/ci-artifacts.png) |
-| 6 | A trace opens | `test-results-1` from the trace-demo run → trace.playwright.dev | Test marked flaky, passed on `retry #1`; `test-results-1` = 583 KB ([run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42754081413)). Opening in trace.playwright.dev: TODO |
+| 6 | A trace opens | `test-results-1` from the trace-demo run → trace.playwright.dev | Test marked flaky, passed on `retry #1`; `test-results-1` = 583 KB ([run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42754081413)). ✓ opened in trace.playwright.dev |
 | 7 | `forbidOnly` fails CI | forbid-only run log | ✓ [run](https://github.com/g1ke1s/sis2-playwright-toolshop/actions/runs/42751438450) fails: *"item focused with '.only' is not allowed due to the 'forbidOnly' option"* |
-| 8 | CI mode locally | `CI=true npx playwright test` | TODO |
+| 8 | CI mode locally | `CI=true npx playwright test` | ✓ done |
 | 9 | Timing medians match the run pages | Actions | ✓ 1 shard: 5:24 / 1:39 / 1:34 → 1:39; 4 shards: 6:26 / 1:47 / 1:31 → 1:47 |
 | 10 | Badge shows `main` status | README front page | ✓ green (latest `main` run #36: `success`) |
 
