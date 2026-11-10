@@ -30,7 +30,7 @@ export default defineConfig({
   use: {
     baseURL: BASE_URL,                       // relative goto()
     testIdAttribute: 'data-test',            // getByTestId -> data-test
-    trace: 'on-first-retry',                 // trace of exactly the failed attempt
+    trace: 'on-first-retry',                 // trace recorded on the first retry
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
